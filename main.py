@@ -9,4 +9,3 @@ reddit = praw.Reddit(client_id = 'pVhsuEKtvSeNVQ',
 subreddit = reddit.subreddit('Cornell')
 
 keyphrase = '!CornellBot'
-
