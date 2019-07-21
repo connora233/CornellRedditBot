@@ -2,7 +2,7 @@
 import praw
 import datetime
 import re
-from concurrent.futures import ThreadPoolExecutor
+import concurrent.futures
 
 #
 reddit = praw.Reddit(client_id = 'pVhsuEKtvSeNVQ',
@@ -34,7 +34,7 @@ def remove_nums(x):
 def find_posts(classes):
     output = ""
     for archive in reddit.subreddit('cornell').new(limit=2000):
-        check = archive.title + " " + archive.selftext()
+        check = archive.title + " " + archive.selftext
         for classNums in classes:
             if classNums in check:
                 output = output + archive.url + "\n"
@@ -43,6 +43,5 @@ def find_posts(classes):
 
 for submission in reddit.subreddit('cornell').new(limit=25):
     keyphrase = remove_nums(remove_duplicates(re.findall(r'\d{4}', submission.title + " " + submission.selftext)))
-    if keyphrase:
-        with ThreadPoolExecutor(max_workers = 3) as executor:
-            thread1 = executor.submit(find_posts(keyphrase))
+    if len(keyphrase) != 0:
+        print(find_posts(keyphrase))
