@@ -31,17 +31,19 @@ def remove_nums(x):
             x.remove(num)
     return x
 
-def find_posts(classes):
+def find_posts(classes, url):
     output = ""
     for archive in reddit.subreddit('cornell').new(limit=2000):
-        check = archive.title + " " + archive.selftext
         for classNums in classes:
-            if classNums in check:
-                output = output + archive.url + "\n"
+            if classNums in archive.title + " " + archive.selftext:
+                for comment in archive.comments:
+                    if classNums in comment.body and archive.url != url:
+                        output = output + archive.url + "\n"
+                        break
     return output
 
 
 for submission in reddit.subreddit('cornell').new(limit=25):
     keyphrase = remove_nums(remove_duplicates(re.findall(r'\d{4}', submission.title + " " + submission.selftext)))
     if len(keyphrase) != 0:
-        print(find_posts(keyphrase))
+        print(find_posts(keyphrase, submission.url))
