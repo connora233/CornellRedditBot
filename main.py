@@ -2,7 +2,6 @@
 import praw
 import datetime
 import re
-import concurrent.futures
 
 #
 reddit = praw.Reddit(client_id = 'pVhsuEKtvSeNVQ',
@@ -12,6 +11,8 @@ reddit = praw.Reddit(client_id = 'pVhsuEKtvSeNVQ',
                      user_agent = 'Made by /u/DubitablyIndubitable')
 
 subreddit = reddit.subreddit('Cornell')
+
+checkedPosts = []
 
 invalidNums = ['1990', '1991', '1992', '1993', '1994', '1995', '1996', '1997', '1999', '2000', '2001', '2002', '2003',
                '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016',
@@ -33,17 +34,21 @@ def remove_nums(x):
 
 def find_posts(classes, url):
     output = ""
-    for archive in reddit.subreddit('cornell').new(limit=2000):
+    for archive in reddit.subreddit('cornell').new(limit = None):
         for classNums in classes:
             if classNums in archive.title + " " + archive.selftext:
                 for comment in archive.comments:
-                    if classNums in comment.body and archive.url != url:
+                    if classNums in comment.body and archive.url != url and archive.url not in output:
                         output = output + archive.url + "\n"
                         break
     return output
 
-
-for submission in reddit.subreddit('cornell').new(limit=25):
-    keyphrase = remove_nums(remove_duplicates(re.findall(r'\d{4}', submission.title + " " + submission.selftext)))
-    if len(keyphrase) != 0:
-        print(find_posts(keyphrase, submission.url))
+while 1 == 1:
+    for submission in reddit.subreddit('cornell').new(limit=25):
+        keyphrase = remove_nums(remove_duplicates(re.findall(r'\d{4}', submission.title + " " + submission.selftext)))
+        if len(keyphrase) != 0 and submission.url not in checkedPosts:
+            checkedPosts = [submission.url] + checkedPosts
+            if (len(checkedPosts) > 30):
+                del checkedPosts[-1]
+            print(find_posts(keyphrase, submission.url))
+    print("Completed!")
