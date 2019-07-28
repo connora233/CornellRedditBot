@@ -1,6 +1,6 @@
 #import needed packages
 import praw
-import datetime
+import time
 import re
 
 #
@@ -13,6 +13,10 @@ reddit = praw.Reddit(client_id = 'pVhsuEKtvSeNVQ',
 subreddit = reddit.subreddit('Cornell')
 
 checkedPosts = []
+
+count = 0
+
+output = ""
 
 invalidNums = ['1990', '1991', '1992', '1993', '1994', '1995', '1996', '1997', '1999', '2000', '2001', '2002', '2003',
                '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016',
@@ -32,14 +36,15 @@ def remove_nums(x):
             x.remove(num)
     return x
 
-def find_posts(classes, url):
+def find_posts(classes, url, num):
     output = ""
     for archive in reddit.subreddit('cornell').new(limit = None):
         for classNums in classes:
             if classNums in archive.title + " " + archive.selftext:
                 for comment in archive.comments:
-                    if classNums in comment.body and archive.url != url and archive.url not in output:
+                    if classNums in comment.body and archive.url != url and archive.url not in output and num < 5:
                         output = output + archive.url + "\n"
+                        num = num + 1
                         break
     return output
 
@@ -50,5 +55,9 @@ while 1 == 1:
             checkedPosts = [submission.url] + checkedPosts
             if (len(checkedPosts) > 30):
                 del checkedPosts[-1]
-            print(find_posts(keyphrase, submission.url))
-    print("Completed!")
+            output = find_posts(keyphrase, submission.url, count)
+            count = 0
+        if len(output) != 0:
+            #submission.comment("I noticed you asked about a specific class! Here are some possibly useful links: \n" + output)
+            output = ""
+    time.sleep(300)
