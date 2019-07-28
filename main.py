@@ -2,12 +2,13 @@
 import praw
 import time
 import re
+import passwords
 
 #creates an instance of a reddit account
-reddit = praw.Reddit(client_id = 'pVhsuEKtvSeNVQ',
-                     client_secret ='y1slipowOeHK5UTjLvby26PKwnA',
+reddit = praw.Reddit(client_id = passwords.client_id,
+                     client_secret = passwords.client_secret,
                      username='Cornell_class_Bot',
-                     password = 'moderation2019',
+                     password = passwords.password,
                      user_agent = 'Made by /u/DubitablyIndubitable')
 
 subreddit = reddit.subreddit('Cornell')
