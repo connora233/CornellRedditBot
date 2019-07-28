@@ -12,7 +12,6 @@ reddit = praw.Reddit(client_id = passwords.client_id,
                      user_agent = 'Made by /u/DubitablyIndubitable')
 
 subreddit = reddit.subreddit('Cornell')
-testing = 456
 #declares neccesary global variables
 checkedPosts = []
 count = 0
