@@ -63,7 +63,7 @@ while 1 == 1:
         if len(output) != 0:
             submission.reply("I noticed you asked about a specific class! Here are some possibly useful links: \n\n" + output)
             comment = comment + 1
-            print(str("This is the " + comment + "th comment!"))
+            print("This is the " + str(comment) + "th comment!")
             output = ""
     print("Sleeping now")
     time.sleep(300)
