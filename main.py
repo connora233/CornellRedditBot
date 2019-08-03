@@ -60,48 +60,6 @@ def find_posts(classes, url, num):
                         break
     return output
 
-
-# loop to constantly check the most recent 25 posts to see if it's neccesary for the bot to comment
-while 1 == 1:
-    for submission in reddit.subreddit('cornell').new(limit=25):
-        if not hasCommented(submission):
-            keyphrase = remove_nums(remove_duplicates(re.findall(
-                r'\d{4}', submission.title + " " + submission.selftext)))
-            if len(keyphrase) != 0 and submission.url not in checkedPosts:
-                checkedPosts = [submission.url] + checkedPosts
-                if (len(checkedPosts) > 30):
-                    del checkedPosts[-1]
-                output = find_posts(keyphrase, submission.url, count)
-                count = 0
-            if len(output) != 0:
-                submission.reply(
-                    "I noticed you asked about a specific class! Here are some possibly useful links: \n\n" + output)
-                comment = comment + 1
-                print("This is the " + str(comment) + "th comment!")
-            output = ""
-    print("Sleeping now")
-    time.sleep(300)
-# reply to all comments invoking classbot
-while True:
-    for submission in reddit.subreddit('cornell').new(limit=1000):
-        for comment in submission.comments:
-            if "!classBot" in comment.body and (not hasReplied(comment)):
-                keyphrase = comment.body.replace("!classBot ", "")
-                if len(keyphrase) != 0 and submission.url not in checkedPosts:
-                    checkedPosts = [submission.url] + checkedPosts
-                if (len(checkedPosts) > 30):
-                    del checkedPosts[-1]
-                output = find_posts(keyphrase, submission.url, count)
-                count = 0
-                if len(output) != 0:
-                    submission.reply(
-                    "I noticed you asked about a specific class! Here are some possibly useful links: \n\n" + output)
-                    comment = comment + 1
-                    print("This is the " + str(comment) + "th comment!")
-                output = ""
-    print("Sleeping now")
-    time.sleep(300)
-
 # function to check if the comments of a post contain a comment by this bot
 
 
@@ -119,3 +77,52 @@ def hasReplied(comment):
         if reply.author == thisUser:
             return True
     return False
+
+
+# reply to all comments invoking classbot
+def reply():
+    for submission in reddit.subreddit('cornell').new(limit=1000):
+        for comment in submission.comments:
+            if "!classBot" in comment.body and (not hasReplied(comment)):
+                keyphrase = comment.body.replace("!classBot ", "")
+                if len(keyphrase) != 0 and submission.url not in checkedPosts:
+                    checkedPosts = [submission.url] + checkedPosts
+                if (len(checkedPosts) > 30):
+                    del checkedPosts[-1]
+                output = find_posts(keyphrase, submission.url, count)
+                count = 0
+                if len(output) != 0:
+                    submission.reply(
+                    "I noticed you asked about a specific class! Here are some possibly useful links: \n\n" + output)
+                    comment = comment + 1
+                    print("This is the " + str(comment) + "th comment!")
+                output = ""
+
+#comment on most recent posts containing a 4-digit number
+def comment():
+    for submission in reddit.subreddit('cornell').new(limit=25):
+        if not hasCommented(submission):
+            keyphrase = remove_nums(remove_duplicates(re.findall(
+                r'\d{4}', submission.title + " " + submission.selftext)))
+            if len(keyphrase) != 0 and submission.url not in checkedPosts:
+                checkedPosts = [submission.url] + checkedPosts
+                if (len(checkedPosts) > 30):
+                    del checkedPosts[-1]
+                output = find_posts(keyphrase, submission.url, count)
+                count = 0
+            if len(output) != 0:
+                submission.reply(
+                    "I noticed you asked about a specific class! Here are some possibly useful links: \n\n" + output)
+                comment = comment + 1
+                print("This is the " + str(comment) + "th comment!")
+            output = ""
+    
+# loop to constantly check the most recent 25 posts to see if it's neccesary for the bot to comment
+while 1 == 1:
+    comment()
+    reply()
+    print("Sleeping now")
+    time.sleep(300)
+
+
+
