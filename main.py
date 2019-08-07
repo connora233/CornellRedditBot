@@ -98,8 +98,7 @@ def reply():
                     output = find_posts(keyphrase, submission.url, count)
                     count = 0
                     if len(output) != 0:
-                        submission.reply(
-                        "I noticed you asked about a specific class! Here are some possibly useful links: \n\n" + output)
+                        comment.reply("I noticed you asked about a specific class! Here are some possibly useful links: \n\n" + output)
                         commentCount = commentCount + 1
                         print("This is the " + str(commentCount) + "th comment!")
                     output = ""
