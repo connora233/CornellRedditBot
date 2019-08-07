@@ -83,19 +83,16 @@ def reply():
     for submission in reddit.subreddit('cornell').new(limit=500):
         for comment in submission.comments:
             if "!classBot" in comment.body and (not hasReplied(comment)):
-                keyphrase = comment.body.replace("!classBot ", "")
-                if len(keyphrase) != 0 and submission.url not in checkedComment:
-                    checkedComment = [submission.url] + checkedComment
-                if (len(checkedComment) > 500):
-                    del checkedComment[-1]
-                output = find_posts(keyphrase, submission.url, count)
-                count = 0
-                if len(output) != 0:
-                    submission.reply(
-                    "I noticed you asked about a specific class! Here are some possibly useful links: \n\n" + output)
-                    comment = comment + 1
-                    print("This is the " + str(comment) + "th comment!")
-                output = ""
+                keyphrase = remove_nums(remove_duplicates(re.findall(r'\d{4}', comment.body)))
+                if len(keyphrase):
+                    output = find_posts(keyphrase, submission.url, count)
+                    count = 0
+                    if len(output) != 0:
+                        submission.reply(
+                        "I noticed you asked about a specific class! Here are some possibly useful links: \n\n" + output)
+                        comment = comment + 1
+                        print("This is the " + str(comment) + "th comment!")
+                    output = ""
 
 #comment on most recent posts containing a 4-digit number
 def comment():
