@@ -16,6 +16,7 @@ reddit = praw.Reddit(client_id=passwords.client_id,
 subreddit = reddit.subreddit('Cornell')
 # declares neccesary global variables
 checkedPosts = []
+checkedComment = []
 count = 0
 comment = 0
 output = ""
@@ -53,9 +54,7 @@ def find_posts(classes, url, num):
             if classNums in archive.title + " " + archive.selftext:
                 for comment in archive.comments:
                     if classNums in comment.body and archive.url != url and archive.url not in output and num < 5:
-                        output = output + \
-                            "[" + archive.title + \
-                            "](" + archive.url + ")" + "\n\n"
+                        output = output + "[" + archive.title + "](" + archive.url + ")" + "\n\n"
                         num = num + 1
                         break
     return output
@@ -64,8 +63,8 @@ def find_posts(classes, url, num):
 
 
 def hasCommented(post):
-    for(comment in post.comments):
-        if(comment.author == thisUser):
+    for comment in post.comments:
+        if comment.author == thisUser:
             return True
     return False
 
@@ -73,7 +72,7 @@ def hasCommented(post):
 
 
 def hasReplied(comment):
-    for(reply in comment.replies):
+    for reply in comment.replies:
         if reply.author == thisUser:
             return True
     return False
@@ -81,14 +80,14 @@ def hasReplied(comment):
 
 # reply to all comments invoking classbot
 def reply():
-    for submission in reddit.subreddit('cornell').new(limit=1000):
+    for submission in reddit.subreddit('cornell').new(limit=500):
         for comment in submission.comments:
             if "!classBot" in comment.body and (not hasReplied(comment)):
                 keyphrase = comment.body.replace("!classBot ", "")
-                if len(keyphrase) != 0 and submission.url not in checkedPosts:
-                    checkedPosts = [submission.url] + checkedPosts
-                if (len(checkedPosts) > 30):
-                    del checkedPosts[-1]
+                if len(keyphrase) != 0 and submission.url not in checkedComment:
+                    checkedComment = [submission.url] + checkedComment
+                if (len(checkedComment) > 500):
+                    del checkedComment[-1]
                 output = find_posts(keyphrase, submission.url, count)
                 count = 0
                 if len(output) != 0:
@@ -102,8 +101,7 @@ def reply():
 def comment():
     for submission in reddit.subreddit('cornell').new(limit=25):
         if not hasCommented(submission):
-            keyphrase = remove_nums(remove_duplicates(re.findall(
-                r'\d{4}', submission.title + " " + submission.selftext)))
+            keyphrase = remove_nums(remove_duplicates(re.findall(r'\d{4}', submission.title + " " + submission.selftext)))
             if len(keyphrase) != 0 and submission.url not in checkedPosts:
                 checkedPosts = [submission.url] + checkedPosts
                 if (len(checkedPosts) > 30):
