@@ -47,6 +47,11 @@ def remove_nums(x):
 
 
 def find_posts(classes, url, num):
+    global checkedPosts
+    global checkedComment
+    global count
+    global comment
+    global output
     output = ""
     print("Searching for related material")
     for archive in reddit.subreddit('cornell').new(limit=None):
@@ -80,6 +85,11 @@ def hasReplied(comment):
 
 # reply to all comments invoking classbot
 def reply():
+    global checkedPosts
+    global checkedComment
+    global count
+    global comment
+    global output
     for submission in reddit.subreddit('cornell').new(limit=500):
         for comment in submission.comments:
             if "!classBot" in comment.body and (not hasReplied(comment)):
@@ -96,6 +106,11 @@ def reply():
 
 #comment on most recent posts containing a 4-digit number
 def comment():
+    global checkedPosts
+    global checkedComment
+    global count
+    global comment
+    global output
     for submission in reddit.subreddit('cornell').new(limit=25):
         if not hasCommented(submission):
             keyphrase = remove_nums(remove_duplicates(re.findall(r'\d{4}', submission.title + " " + submission.selftext)))
