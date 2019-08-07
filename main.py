@@ -18,7 +18,7 @@ subreddit = reddit.subreddit('Cornell')
 checkedPosts = []
 checkedComment = []
 count = 0
-comment = 0
+commentCount = 0
 output = ""
 
 # common 4-digit numbers mentioned in posts that could create a false-positive
@@ -50,7 +50,7 @@ def find_posts(classes, url, num):
     global checkedPosts
     global checkedComment
     global count
-    global comment
+    global commentCount
     global output
     output = ""
     print("Searching for related material")
@@ -88,7 +88,7 @@ def reply():
     global checkedPosts
     global checkedComment
     global count
-    global comment
+    global commentCount
     global output
     for submission in reddit.subreddit('cornell').new(limit=500):
         for comment in submission.comments:
@@ -100,8 +100,8 @@ def reply():
                     if len(output) != 0:
                         submission.reply(
                         "I noticed you asked about a specific class! Here are some possibly useful links: \n\n" + output)
-                        comment = comment + 1
-                        print("This is the " + str(comment) + "th comment!")
+                        commentCount = commentCount + 1
+                        print("This is the " + str(commentCount) + "th comment!")
                     output = ""
 
 #comment on most recent posts containing a 4-digit number
@@ -109,7 +109,7 @@ def comment():
     global checkedPosts
     global checkedComment
     global count
-    global comment
+    global commentCount
     global output
     for submission in reddit.subreddit('cornell').new(limit=25):
         if not hasCommented(submission):
@@ -123,8 +123,8 @@ def comment():
             if len(output) != 0:
                 submission.reply(
                     "I noticed you asked about a specific class! Here are some possibly useful links: \n\n" + output)
-                comment = comment + 1
-                print("This is the " + str(comment) + "th comment!")
+                commentCount = commentCount + 1
+                print("This is the " + str(commentCount) + "th comment!")
             output = ""
     
 # loop to constantly check the most recent 25 posts to see if it's neccesary for the bot to comment
